@@ -1,0 +1,8 @@
+data/
+old_data_broken/
+prod_keystore/
+.env
+bootnode.key
+DOCKERFILE
+genesis.json2
+genesis.json.backup
