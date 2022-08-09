@@ -11,5 +11,6 @@ geth --datadir data \
   --unlock "$pk" \
   --password "$pw" \
   --bootnodes "$bn" \
-  --mine
+  --mine \
+  --syncmode=full \
   --port "$port"

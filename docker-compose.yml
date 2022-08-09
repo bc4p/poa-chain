@@ -17,7 +17,7 @@ services:
       - ./data/node:/data
     ports:
       - "8545:8545"
-    command: [ "sh", "/node.sh", "enode://${NODE_CONNECTION}@bootnode:0?discport=30301", "${NETWORK_ID}" ]
+    command: [ "sh", "/node.sh", "enode://${NODE_CONNECTION}@bootnode:0?discport=30301", "30310", "${NETWORK_ID}" ]
 
   tools:
     image: ethereum/client-go:alltools-stable
@@ -33,7 +33,7 @@ services:
       - ./keystore/1_2d558F4633FF8011C27401c0070Fd1E981770B94.json:/data/keystore/1_2d558F4633FF8011C27401c0070Fd1E981770B94:ro
       - ./genesis.json:/genesis.json:ro
       - ./data/validator1:/data
-    command: [ "sh", "/validator.sh", "${VALIDATOR_PUB_1}", "${VALIDATOR_PW_1}", "enode://${NODE_CONNECTION}@bootnode:0?discport=30301", "30310", "${NETWORK_ID}" ]
+    command: [ "sh", "/validator.sh", "${VALIDATOR_PUB_1}", "${VALIDATOR_PW_1}", "enode://${NODE_CONNECTION}@bootnode:0?discport=30301", "30311", "${NETWORK_ID}" ]
 
   validator2:
     image: ethereum/client-go:alltools-stable
@@ -42,7 +42,7 @@ services:
       - ./keystore/2_66DFE79b64F64718430ffc468806FB3E13853651.json:/data/keystore/2_66DFE79b64F64718430ffc468806FB3E13853651:ro
       - ./genesis.json:/genesis.json:ro
       - ./data/validator2:/data
-    command: [ "sh", "/validator.sh", "${VALIDATOR_PUB_2}", "${VALIDATOR_PW_2}", "enode://${NODE_CONNECTION}@bootnode:0?discport=30301", "30311", "${NETWORK_ID}" ]
+    command: [ "sh", "/validator.sh", "${VALIDATOR_PUB_2}", "${VALIDATOR_PW_2}", "enode://${NODE_CONNECTION}@bootnode:0?discport=30301", "30312", "${NETWORK_ID}" ]
 
   validator3:
     image: ethereum/client-go:alltools-stable
@@ -51,7 +51,7 @@ services:
       - ./keystore/3_388C9150daea7e36560c6A22A88D6fE7d3749845.json:/data/keystore/3_388C9150daea7e36560c6A22A88D6fE7d3749845:ro
       - ./genesis.json:/genesis.json:ro
       - ./data/validator3:/data
-    command: [ "sh", "/validator.sh", "${VALIDATOR_PUB_3}", "${VALIDATOR_PW_3}", "enode://${NODE_CONNECTION}@bootnode:0?discport=30301", 30312", "${NETWORK_ID}" ]
+    command: [ "sh", "/validator.sh", "${VALIDATOR_PUB_3}", "${VALIDATOR_PW_3}", "enode://${NODE_CONNECTION}@bootnode:0?discport=30301", "30313", "${NETWORK_ID}" ]
 
   db:
     image: postgres:14-alpine

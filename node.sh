@@ -1,5 +1,6 @@
 bn=$1
-netid=$2
+port=$2
+netid=$3
 geth init --datadir data genesis.json
 
 geth --datadir data \
@@ -7,5 +8,7 @@ geth --datadir data \
   --networkid "$netid" \
   --bootnodes "$bn" \
   --syncmode=full \
-  --gcmode=archive
+  --gcmode=archive \
+  --port "$port"
+
 #  --nat extip 10.13.10.61
