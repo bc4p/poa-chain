@@ -86,3 +86,13 @@ services:
         ECTO_USE_SSL: 'false'
     ports:
       - 4000:4000
+
+  faucet:
+    image: eth-faucet
+    build: .
+    container_name: 'faucet'
+    restart: always
+    depends_on:
+      - rpc-node
+    ports:
+      - 9000:9000

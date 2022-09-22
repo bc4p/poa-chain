@@ -45,6 +45,8 @@ from web3 import Web3
 w3 = Web3(Web3.HTTPProvider('https://bc4p.nowum.fh-aachen.de/blockchain'))
 ```
 
+For a further example, look into the `faucet.py`
+
 ## Rebooting/Cold Booting the Blockchain
 
 If a node hangs or all nodes were rebooted, it might appear, that they are stuck with `Looking for peers` you can reset a node using the `./restart.sh` script using e.g.

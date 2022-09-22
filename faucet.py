@@ -11,8 +11,11 @@ app = Flask(__name__)
 # FROM
 FROM = os.getenv('PUBLIC_KEY','0x2d558F4633FF8011C27401c0070Fd1E981770B94')
 FROM_PRIVATEKEY = os.getenv('PRIVATE_KEY','0x6ec4b834db4a9d1d36e21b5cee822ea28d0666a34741ae222f946fc3517ef73b')
-FAUCET_VALUE = os.getenv('FAUCET_VALUE',5) # ether
-
+FAUCET_VALUE = os.getenv('FAUCET_VALUE','5') # ether
+RPC_URI = os.getenv('RPC_URI', 'https://bc4p.nowum.fh-aachen.de/blockchain')
+# For real ETH: https://mainnet.infura.io/v3/
+TITLE = os.getenv('FAUCET_TITLE','BC4P Faucet')
+CHAIN_ID = os.getenv('CHAIN_ID','123321')
 @app.route("/", methods=["GET"])
 def home():
     return redirect("/faucet")
@@ -28,13 +31,13 @@ def add_key():
             raise Exception('public_key missing')
         print(f"from: {FROM},to: {public_key}, value: {FAUCET_VALUE} ether")
 
-        web3 = Web3(Web3.HTTPProvider('https://bc4p.nowum.fh-aachen.de/blockchain'))
+        web3 = Web3(Web3.HTTPProvider(RPC_URI))
         nonce = web3.eth.getTransactionCount(FROM)
         gasPrice = web3.toWei('1', 'gwei')
         value = web3.toWei(FAUCET_VALUE, 'ether')
 
         tx = {
-            'chainId': 123321,
+            'chainId': int(CHAIN_ID),
             'nonce': nonce,
             'to': public_key,
             'value': value,
@@ -54,11 +57,11 @@ def add_key():
 
 @app.route("/faucet", methods=["GET"])
 def faucet():
-    return '''
+    html = f'''
 <html>
    <body>
        <div center style="width: 60%; margin: auto; height: 80%" >
-        <h1>BC4P Token Faucet</h1>
+        <h1 style="text-align:center;">{TITLE}</h1>
         <form id="key_form" action = "/faucet/api/add_key" method="POST" style="display: flex;flex-direction: column;">
             <span style="margin-bottom: 20px;">
                 <label for="public_key">Wallet address</label><br>
@@ -72,7 +75,9 @@ def faucet():
 
    </body>
 </html>
+'''
 
+    script = '''
 <script>
 var form = document.getElementById('key_form');
 form.onsubmit = function(event){
@@ -97,6 +102,7 @@ form.onsubmit = function(event){
     }
 </script>
 '''
+    return html+script
 # https://stackoverflow.com/a/69374442
 
 if __name__ == "__main__":
