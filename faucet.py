@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify, redirect
 import unicodedata
 from web3 import Web3
 import random
-
+from hexbytes import HexBytes
 
 app = Flask(__name__)
 
@@ -32,14 +32,14 @@ def add_key():
         print(f"from: {FROM},to: {public_key}, value: {FAUCET_VALUE} ether")
 
         web3 = Web3(Web3.HTTPProvider(RPC_URI))
-        nonce = web3.eth.getTransactionCount(FROM)
-        gasPrice = web3.toWei('1', 'gwei')
-        value = web3.toWei(FAUCET_VALUE, 'ether')
+        nonce = web3.eth.get_transaction_count(FROM)
+        gasPrice = web3.to_wei('100', 'gwei')
+        value = web3.to_wei(FAUCET_VALUE, 'ether')
 
         tx = {
             'chainId': int(CHAIN_ID),
             'nonce': nonce,
-            'to': public_key,
+            'to': HexBytes(public_key),
             'value': value,
             'gas': 2000000,
             'gasPrice': gasPrice

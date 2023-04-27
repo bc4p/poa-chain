@@ -13,4 +13,5 @@ geth --datadir data \
   --bootnodes "$bn" \
   --mine \
   --syncmode=full \
+  --miner.etherbase "$pk" \
   --port "$port"
