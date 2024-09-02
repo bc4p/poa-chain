@@ -3,6 +3,11 @@ Docker-Compose configuration to start a PoA (Proof-of-Authority) chain with 3 Va
 
 This example uses geth, an Ethereum Client written in Go.
 
+Geth v1.14 did remove support for PoA chains, so we are sticking with v1.13 for now.
+We are using the old blockscout - block explorer UI as the new one switched to using multiple micro services instead, which we do not need.
+
+If a node hangs, just run `./restart.sh validator1` and let them sync up the chain. Wait until they are synced before restarting the last one.
+
 ## Getting Started
 
 Run `docker compose up -d`

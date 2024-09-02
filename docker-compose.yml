@@ -1,17 +1,20 @@
-version: "3.8"
-
 services:
 
   bootnode:
-    image: ethereum/client-go:alltools-stable
+    image: ethereum/client-go:alltools-v1.13.12
     container_name: 'bootnode'
     ports:
       - "30301:30301"
       - "30303:30303"
     command: [ "bootnode", "-nodekeyhex", "${NODE_PRIVATE}", "-verbosity", "3" ]
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
 
   rpc-node:
-    image: ethereum/client-go:alltools-stable
+    image: ethereum/client-go:alltools-v1.13.12
     container_name: 'rpc-node'
     volumes:
       - ./node.sh:/node.sh:ro
@@ -20,16 +23,26 @@ services:
     ports:
       - "8545:8545"
     command: [ "sh", "/node.sh", "enode://${NODE_CONNECTION}@bootnode:0?discport=30301", "30310", "${NETWORK_ID}" ]
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
 
   tools:
-    image: ethereum/client-go:alltools-stable
+    image: ethereum/client-go:alltools-v1.13.12
     volumes:
       - ./genesis.json:/genesis.json:ro
     command: [ "sh", "-c", "tail -f /dev/null" ]
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
 
 
   validator1:
-    image: ethereum/client-go:alltools-stable
+    image: ethereum/client-go:alltools-v1.13.12
     container_name: 'validator1'
     volumes:
       - ./validator.sh:/validator.sh:ro
@@ -37,9 +50,14 @@ services:
       - ./genesis.json:/genesis.json:ro
       - ./data/validator1:/data
     command: [ "sh", "/validator.sh", "${VALIDATOR_PUB_1}", "${VALIDATOR_PW_1}", "enode://${NODE_CONNECTION}@bootnode:0?discport=30301", "30311", "${NETWORK_ID}" ]
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
 
   validator2:
-    image: ethereum/client-go:alltools-stable
+    image: ethereum/client-go:alltools-v1.13.12
     container_name: 'validator2'
     volumes:
       - ./validator.sh:/validator.sh:ro
@@ -47,9 +65,14 @@ services:
       - ./genesis.json:/genesis.json:ro
       - ./data/validator2:/data
     command: [ "sh", "/validator.sh", "${VALIDATOR_PUB_2}", "${VALIDATOR_PW_2}", "enode://${NODE_CONNECTION}@bootnode:0?discport=30301", "30312", "${NETWORK_ID}" ]
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == worker]
 
   validator3:
-    image: ethereum/client-go:alltools-stable
+    image: ethereum/client-go:alltools-v1.13.12
     container_name: 'validator3'
     volumes:
       - ./validator.sh:/validator.sh:ro
@@ -57,6 +80,11 @@ services:
       - ./genesis.json:/genesis.json:ro
       - ./data/validator3:/data
     command: [ "sh", "/validator.sh", "${VALIDATOR_PUB_3}", "${VALIDATOR_PW_3}", "enode://${NODE_CONNECTION}@bootnode:0?discport=30301", "30313", "${NETWORK_ID}" ]
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
 
   blockscout-db:
     image: postgres:15-alpine
@@ -72,6 +100,11 @@ services:
       - ./data/blockscout-db:/var/lib/postgresql/data
     ports:
       - 7432:5432
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
 
   blockscout:
     depends_on:
@@ -80,7 +113,7 @@ services:
     image: blockscout/blockscout:${DOCKER_TAG:-latest}
     restart: always
     container_name: 'blockscout'
-    command: bash -c "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start > /dev/null 2>&1"
+    command: sh -c "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"
     env_file:
       -  ./envs/common-blockscout.env
     environment:
